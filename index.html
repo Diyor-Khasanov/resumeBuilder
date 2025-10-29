@@ -1,210 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Resume Builder — Live Preview</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./app.js" defer></script>
     <link rel="stylesheet" href="./style.css">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="app">
-      <div class="panel">
-        <h2>Resume Builder</h2>
-        <p class="lead">
-          Fill the form — preview updates live. Export to PDF or download JSON
-          to save.
-        </p>
-
-        <div class="grid">
-          <div class="full">
-            <label>Full name</label>
-            <input id="fullName" type="text" placeholder="e.g. Diyor Xasanov" />
-          </div>
-          <div>
-            <label>Role / Title</label>
-            <input id="title" type="text" placeholder="Frontend Developer" />
-          </div>
-          <div>
-            <label>Email</label>
-            <input id="email" type="email" placeholder="you@example.com" />
-          </div>
-          <div>
-            <label>Phone</label>
-            <input id="phone" type="tel" placeholder="+998 90 000 0000" />
-          </div>
-
-          <div class="full">
-            <label>Summary / About</label>
-            <textarea
-              id="summary"
-              placeholder="Short professional summary"
-            ></textarea>
-          </div>
-
-          <div class="full">
-            <label>Skills (comma separated)</label>
-            <input
-              id="skills"
-              type="text"
-              placeholder="React, JavaScript, Node.js, CSS"
-            />
-          </div>
-
-          <div class="full">
-            <label
-              >Experience (one per line. Format: Company | Role | 2019-2022 |
-              Short note)</label
-            >
-            <textarea
-              id="experience"
-              placeholder="Acme Co | Frontend Dev | 2020-2023 | Built a dashboard..."
-            ></textarea>
-          </div>
-
-          <div class="full">
-            <label
-              >Education (one per line. Format: School | Degree | Years)</label
-            >
-            <textarea
-              id="education"
-              placeholder="University | BSc Computer Science | 2016-2020"
-            ></textarea>
-          </div>
-
-          <div class="full photo-input">
-            <div style="flex: 1">
-              <label>Profile photo</label>
-              <input id="photo" type="file" accept="image/*" />
-              <div class="muted" style="margin-top: 6px; font-size: 12px">
-                Optional — used in the preview. Will not be uploaded anywhere.
-              </div>
+    <title>Professional Resume Builder</title>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Professional Resume Builder</h1>
+        
+        <div class="form-section">
+            <h2>Personal Information</h2>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="John Doe">
             </div>
-            <div>
-              <div class="avatar-preview" id="avatarPreview">
-                <span
-                  style="
-                    font-size: 12px;
-                    color: var(--muted);
-                    padding: 6px;
-                    text-align: center;
-                  "
-                  >No photo</span
-                >
-              </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="john.doe@email.com">
             </div>
-          </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="phone" placeholder="+1 234 567 8900">
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" id="location" placeholder="City, Country">
+            </div>
+            <div class="form-group">
+                <label>Professional Summary</label>
+                <textarea id="summary" placeholder="Brief professional summary..."></textarea>
+            </div>
+
+            <h2 style="margin-top: 30px;">Experience</h2>
+            <div id="experienceContainer" class="array-section"></div>
+            <button class="btn btn-primary" onclick="addExperience()">+ Add Experience</button>
+
+            <h2 style="margin-top: 30px;">Education</h2>
+            <div id="educationContainer" class="array-section"></div>
+            <button class="btn btn-primary" onclick="addEducation()">+ Add Education</button>
+
+            <h2 style="margin-top: 30px;">Skills</h2>
+            <div class="form-group">
+                <input type="text" id="skillInput" placeholder="Enter a skill and press Enter">
+            </div>
+            <div id="skillsContainer" class="skills-list"></div>
+
+            <h2 style="margin-top: 30px;">Languages</h2>
+            <div class="form-group">
+                <input type="text" id="languageInput" placeholder="Enter a language and press Enter">
+            </div>
+            <div id="languagesContainer" class="languages-list"></div>
         </div>
 
-        <div class="actions">
-          <button id="exportPdf" class="small">Export PDF</button>
-          <button id="downloadJson" class="small ghost">Download JSON</button>
-          <label
-            for="loadJson"
-            class="small ghost"
-            style="
-              display: inline-flex;
-              align-items: center;
-              gap: 8px;
-              cursor: pointer;
-              padding: 8px 10px;
-              border-radius: 10px;
-            "
-            >Load JSON<input
-              id="loadJson"
-              type="file"
-              accept="application/json"
-              style="display: none"
-          /></label>
-          <button id="sample" class="small ghost">Load sample</button>
-          <button id="clear" class="small ghost">Clear</button>
-        </div>
-      </div>
-
-      <div class="preview-wrap">
-        <div
-          style="
-            display: flex;
-            gap: 12px;
-            margin-bottom: 8px;
-            align-items: center;
-            justify-content: flex-end;
-          "
-        >
-          <div class="preview-toolbar">
-            <button id="toggleTheme" class="toggle">Toggle Dark</button>
-          </div>
-        </div>
-
-        <div class="resume" id="resume">
-          <div class="header">
-            <div style="flex: 1">
-              <div class="name" id="pvName">Your Name</div>
-              <div class="role" id="pvTitle">Professional Title</div>
-              <div class="contact" id="pvContact">
-                <div id="pvEmail">you@example.com</div>
-                <div id="pvPhone">+998 90 000 0000</div>
-              </div>
-            </div>
-            <div style="width: 110px">
-              <div
-                style="
-                  width: 110px;
-                  height: 110px;
-                  border-radius: 10px;
-                  overflow: hidden;
-                  background: #f1f5f9;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-                id="pvPhotoWrap"
-              >
-                <!-- photo will appear here -->
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="section-title">Profile</div>
-            <div class="muted" id="pvSummary">
-              Short summary will appear here.
-            </div>
-          </div>
-
-          <div class="two-cols">
-            <div>
-              <div class="section-title">Experience</div>
-              <div id="pvExperience" class="muted">
-                <div class="experience-item">
-                  <div class="meta">
-                    Acme Corp — Senior Frontend — 2021-2024
-                  </div>
-                  <div>Worked on reactive dashboards and UIs.</div>
+        <div class="preview-section">
+            <div class="resume" id="resume">
+                <div class="resume-header">
+                    <h2 id="previewName">Your Name</h2>
+                    <p id="previewEmail"></p>
+                    <p id="previewPhone"></p>
+                    <p id="previewLocation"></p>
                 </div>
-              </div>
-            </div>
-            <div>
-              <div class="section-title">Skills</div>
-              <div id="pvSkills" class="muted">
-                <span class="skill-pill">JavaScript</span>
-                <span class="skill-pill">React</span>
-              </div>
 
-              <div style="margin-top: 12px">
-                <div class="section-title">Education</div>
-                <div id="pvEducation" class="muted">
-                  University — BSc — 2016-2020
+                <div class="resume-section" id="summarySection" style="display: none;">
+                    <h3>Professional Summary</h3>
+                    <p id="previewSummary"></p>
                 </div>
-              </div>
+
+                <div class="resume-section" id="experienceSection" style="display: none;">
+                    <h3>Experience</h3>
+                    <div id="previewExperience"></div>
+                </div>
+
+                <div class="resume-section" id="educationSection" style="display: none;">
+                    <h3>Education</h3>
+                    <div id="previewEducation"></div>
+                </div>
+
+                <div class="resume-section" id="skillsSection" style="display: none;">
+                    <h3>Skills</h3>
+                    <div id="previewSkills" class="skills-list"></div>
+                </div>
+
+                <div class="resume-section" id="languagesSection" style="display: none;">
+                    <h3>Languages</h3>
+                    <div id="previewLanguages" class="languages-list"></div>
+                </div>
             </div>
-          </div>
+            <button class="btn download-btn" onclick="downloadResume()">📄 Download as PDF</button>
         </div>
-      </div>
     </div>
-  </body>
+
+    
+</body>
 </html>

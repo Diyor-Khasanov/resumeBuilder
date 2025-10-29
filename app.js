@@ -1,234 +1,249 @@
-// helper to grab elements
-const $ = (id) => document.getElementById(id);
+let experiences = [];
+let educations = [];
+let skills = [];
+let languages = [];
 
-// inputs
-const inputs = [
-  "fullName",
-  "title",
-  "email",
-  "phone",
-  "summary",
-  "skills",
-  "experience",
-  "education",
-];
-inputs.forEach((id) => {
-  const el = $(id);
-  el && el.addEventListener("input", updatePreview);
-});
+function addExperience() {
+  const id = Date.now();
+  experiences.push({ id, title: "", company: "", period: "", description: "" });
+  renderExperiences();
+}
 
-// photo handling
-$("photo").addEventListener("change", (e) => {
-  const f = e.target.files[0];
-  const wrap = $("pvPhotoWrap");
-  const avatar = $("avatarPreview");
-  if (!f) {
-    wrap.innerHTML = "";
-    avatar.innerHTML =
-      '<span style="font-size:12px;color:var(--muted);padding:6px;text-align:center">No photo</span>';
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    wrap.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover"/>`;
-    avatar.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover"/>`;
-  };
-  reader.readAsDataURL(f);
-});
+function removeExperience(id) {
+  experiences = experiences.filter((exp) => exp.id !== id);
+  renderExperiences();
+}
+
+function renderExperiences() {
+  const container = document.getElementById("experienceContainer");
+  container.innerHTML = experiences
+    .map(
+      (exp) => `
+                <div class="array-item">
+                    <button class="btn btn-secondary remove-btn" onclick="removeExperience(${exp.id})">✕</button>
+                    <div class="form-group">
+                        <label>Job Title</label>
+                        <input type="text" value="${exp.title}" onchange="updateExperience(${exp.id}, 'title', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input type="text" value="${exp.company}" onchange="updateExperience(${exp.id}, 'company', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Period</label>
+                        <input type="text" value="${exp.period}" placeholder="Jan 2020 - Present" onchange="updateExperience(${exp.id}, 'period', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea onchange="updateExperience(${exp.id}, 'description', this.value)">${exp.description}</textarea>
+                    </div>
+                </div>
+            `
+    )
+    .join("");
+  updatePreview();
+}
+
+function updateExperience(id, field, value) {
+  const exp = experiences.find((e) => e.id === id);
+  if (exp) exp[field] = value;
+  updatePreview();
+}
+
+function addEducation() {
+  const id = Date.now();
+  educations.push({ id, degree: "", school: "", period: "", description: "" });
+  renderEducations();
+}
+
+function removeEducation(id) {
+  educations = educations.filter((edu) => edu.id !== id);
+  renderEducations();
+}
+
+function renderEducations() {
+  const container = document.getElementById("educationContainer");
+  container.innerHTML = educations
+    .map(
+      (edu) => `
+                <div class="array-item">
+                    <button class="btn btn-secondary remove-btn" onclick="removeEducation(${edu.id})">✕</button>
+                    <div class="form-group">
+                        <label>Degree</label>
+                        <input type="text" value="${edu.degree}" onchange="updateEducation(${edu.id}, 'degree', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>School/University</label>
+                        <input type="text" value="${edu.school}" onchange="updateEducation(${edu.id}, 'school', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Period</label>
+                        <input type="text" value="${edu.period}" placeholder="2016 - 2020" onchange="updateEducation(${edu.id}, 'period', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Description (Optional)</label>
+                        <textarea onchange="updateEducation(${edu.id}, 'description', this.value)">${edu.description}</textarea>
+                    </div>
+                </div>
+            `
+    )
+    .join("");
+  updatePreview();
+}
+
+function updateEducation(id, field, value) {
+  const edu = educations.find((e) => e.id === id);
+  if (edu) edu[field] = value;
+  updatePreview();
+}
+
+document
+  .getElementById("skillInput")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter" && this.value.trim()) {
+      skills.push(this.value.trim());
+      this.value = "";
+      renderSkills();
+    }
+  });
+
+function removeSkill(index) {
+  skills.splice(index, 1);
+  renderSkills();
+}
+
+function renderSkills() {
+  const container = document.getElementById("skillsContainer");
+  container.innerHTML = skills
+    .map(
+      (skill, index) => `
+                <div class="skill-tag">${skill} <span style="cursor: pointer; margin-left: 5px;" onclick="removeSkill(${index})">✕</span></div>
+            `
+    )
+    .join("");
+  updatePreview();
+}
+
+document
+  .getElementById("languageInput")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter" && this.value.trim()) {
+      languages.push(this.value.trim());
+      this.value = "";
+      renderLanguages();
+    }
+  });
+
+function removeLanguage(index) {
+  languages.splice(index, 1);
+  renderLanguages();
+}
+
+function renderLanguages() {
+  const container = document.getElementById("languagesContainer");
+  container.innerHTML = languages
+    .map(
+      (lang, index) => `
+                <div class="language-tag">${lang} <span style="cursor: pointer; margin-left: 5px;" onclick="removeLanguage(${index})">✕</span></div>
+            `
+    )
+    .join("");
+  updatePreview();
+}
+
+document.getElementById("fullName").addEventListener("input", updatePreview);
+document.getElementById("email").addEventListener("input", updatePreview);
+document.getElementById("phone").addEventListener("input", updatePreview);
+document.getElementById("location").addEventListener("input", updatePreview);
+document.getElementById("summary").addEventListener("input", updatePreview);
 
 function updatePreview() {
-  $("pvName").textContent = $("fullName").value || "Your Name";
-  $("pvTitle").textContent = $("title").value || "Professional Title";
-  $("pvEmail").textContent = $("email").value || "";
-  $("pvPhone").textContent = $("phone").value || "";
-  $("pvSummary").textContent =
-    $("summary").value || "Short summary will appear here.";
+  document.getElementById("previewName").textContent =
+    document.getElementById("fullName").value || "Your Name";
+  document.getElementById("previewEmail").textContent =
+    document.getElementById("email").value;
+  document.getElementById("previewPhone").textContent =
+    document.getElementById("phone").value;
+  document.getElementById("previewLocation").textContent =
+    document.getElementById("location").value;
 
-  // skills -> pills
-  const skills = ($("skills").value || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-  const pvSkills = $("pvSkills");
-  pvSkills.innerHTML = "";
-  skills.forEach((s) => {
-    const span = document.createElement("span");
-    span.className = "skill-pill";
-    span.textContent = s;
-    pvSkills.appendChild(span);
-  });
-  if (!skills.length)
-    pvSkills.innerHTML =
-      '<span class="muted">Add skills, separated by commas</span>';
+  const summary = document.getElementById("summary").value;
+  document.getElementById("summarySection").style.display = summary
+    ? "block"
+    : "none";
+  document.getElementById("previewSummary").textContent = summary;
 
-  // experience
-  const expText = ($("experience").value || "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-  const pvExp = $("pvExperience");
-  pvExp.innerHTML = "";
-  if (expText.length) {
-    expText.forEach((line) => {
-      // try to split by | into parts
-      const parts = line.split("|").map((p) => p.trim());
-      const meta = parts.slice(0, 3).join(" — ");
-      const note = parts.slice(3).join(" | ");
-      const item = document.createElement("div");
-      item.className = "experience-item";
-      const metaEl = document.createElement("div");
-      metaEl.className = "meta";
-      metaEl.textContent = meta || line;
-      const noteEl = document.createElement("div");
-      noteEl.textContent = note || "";
-      item.appendChild(metaEl);
-      if (noteEl.textContent) item.appendChild(noteEl);
-      pvExp.appendChild(item);
-    });
+  const expSection = document.getElementById("experienceSection");
+  const expPreview = document.getElementById("previewExperience");
+  if (experiences.length > 0) {
+    expSection.style.display = "block";
+    expPreview.innerHTML = experiences
+      .map(
+        (exp) => `
+                    <div class="resume-item">
+                        <h4>${exp.title}</h4>
+                        <div class="meta">${exp.company} ${
+          exp.period ? "| " + exp.period : ""
+        }</div>
+                        <p>${exp.description}</p>
+                    </div>
+                `
+      )
+      .join("");
   } else {
-    pvExp.innerHTML =
-      '<div class="muted">Add your experience lines in the left form.</div>';
+    expSection.style.display = "none";
   }
 
-  // education
-  const edu = ($("education").value || "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-  $("pvEducation").innerHTML = edu.length
-    ? edu.map((e) => `<div>${escapeHtml(e)}</div>`).join("")
-    : '<div class="muted">Add education entries</div>';
+  const eduSection = document.getElementById("educationSection");
+  const eduPreview = document.getElementById("previewEducation");
+  if (educations.length > 0) {
+    eduSection.style.display = "block";
+    eduPreview.innerHTML = educations
+      .map(
+        (edu) => `
+                    <div class="resume-item">
+                        <h4>${edu.degree}</h4>
+                        <div class="meta">${edu.school} ${
+          edu.period ? "| " + edu.period : ""
+        }</div>
+                        ${
+                          edu.description
+                            ? "<p>" + edu.description + "</p>"
+                            : ""
+                        }
+                    </div>
+                `
+      )
+      .join("");
+  } else {
+    eduSection.style.display = "none";
+  }
+
+  const skillsSection = document.getElementById("skillsSection");
+  const skillsPreview = document.getElementById("previewSkills");
+  if (skills.length > 0) {
+    skillsSection.style.display = "block";
+    skillsPreview.innerHTML = skills
+      .map((skill) => `<div class="skill-tag">${skill}</div>`)
+      .join("");
+  } else {
+    skillsSection.style.display = "none";
+  }
+
+  const langsSection = document.getElementById("languagesSection");
+  const langsPreview = document.getElementById("previewLanguages");
+  if (languages.length > 0) {
+    langsSection.style.display = "block";
+    langsPreview.innerHTML = languages
+      .map((lang) => `<div class="language-tag">${lang}</div>`)
+      .join("");
+  } else {
+    langsSection.style.display = "none";
+  }
 }
 
-// utility to escape HTML
-function escapeHtml(s) {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-// initial update
-updatePreview();
-
-// export PDF
-$("exportPdf").addEventListener("click", () => {
-  // print will open print dialog; user can 'Save as PDF' in browser
+function downloadResume() {
   window.print();
-});
-
-// download JSON
-$("downloadJson").addEventListener("click", () => {
-  const data = collectData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = (data.fullName || "resume").replace(/\s+/g, "_") + ".json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-});
-
-// load JSON
-$("loadJson").addEventListener("change", (e) => {
-  const f = e.target.files[0];
-  if (!f) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      populateFromData(data);
-    } catch (err) {
-      alert("Invalid JSON file");
-    }
-  };
-  reader.readAsText(f);
-});
-
-function collectData() {
-  return {
-    fullName: $("fullName").value,
-    title: $("title").value,
-    email: $("email").value,
-    phone: $("phone").value,
-    summary: $("summary").value,
-    skills: $("skills").value,
-    experience: $("experience").value,
-    education: $("education").value,
-  };
 }
 
-function populateFromData(d) {
-  inputs.forEach((k) => {
-    if (d[k] !== undefined) $(k).value = d[k];
-  });
-  updatePreview();
-}
-
-// sample data
-$("sample").addEventListener("click", () => {
-  const sample = {
-    fullName: "Diyor Xasanov",
-    title: "Frontend Developer",
-    email: "diyor@example.com",
-    phone: "+998 90 123 4567",
-    summary:
-      "Creative frontend developer with 3+ years building responsive, accessible interfaces and reusable component libraries.",
-    skills: "JavaScript, React, Next.js, SCSS, Node.js",
-    experience:
-      "TechBridge | Frontend Developer | 2022-2025 | Built admin dashboards and interactive training apps.\nKristall | UI Dev | 2021-2022 | Implemented marketing landing pages and performance optimizations.",
-    education: "National University | BSc Computer Science | 2018-2022",
-  };
-  populateFromData(sample);
-});
-
-// clear
-$("clear").addEventListener("click", () => {
-  if (!confirm("Clear the form?")) return;
-  inputs.forEach((k) => ($(k).value = ""));
-  $("photo").value = "";
-  $("pvPhotoWrap").innerHTML = "";
-  $("avatarPreview").innerHTML =
-    '<span style="font-size:12px;color:var(--muted);padding:6px;text-align:center">No photo</span>';
-  updatePreview();
-});
-
-// theme toggle for preview (dark <-> light style for resume)
-let light = false;
-$("toggleTheme").addEventListener("click", () => {
-  const root = document.documentElement;
-  light = !light;
-  if (light) {
-    // apply a light mode to resume container
-    $("resume").style.background = "white";
-    $("resume").style.color = "#061225";
-    $("toggleTheme").textContent = "Toggle Light";
-  } else {
-    $("resume").style.background = "var(--paper)";
-    $("resume").style.color = "#0b1220";
-    $("toggleTheme").textContent = "Toggle Dark";
-  }
-});
-
-// small helper: autosave to localStorage every 6s
-setInterval(() => {
-  const s = collectData();
-  localStorage.setItem("resume_builder_draft", JSON.stringify(s));
-}, 6000);
-
-// load draft if present
-(function () {
-  const draft = localStorage.getItem("resume_builder_draft");
-  if (draft) {
-    try {
-      const d = JSON.parse(draft);
-      populateFromData(d);
-    } catch (e) {}
-  }
-})();
-
-// prevent long prints from cutting content awkwardly
-window.onbeforeprint = () => {
-  // you can tweak styles here before printing if needed
-};
+updatePreview();
